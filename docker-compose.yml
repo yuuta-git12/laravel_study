@@ -1,0 +1,15 @@
+version: '3.8'
+services:
+
+  #Apachコンテナ
+  apache:
+    build: ./apache-custom
+    image: php:8.2-apache
+    ports:
+      - 8080:80
+    volumes:
+      - ./config/php/php.ini:/usr/local/etc/php/php.ini:cached  # ホストの./php.iniをコンテナの/usr/local/etc/php/php.iniにバインドマウント
+      - ./html:/var/www/html
+    # ドキュメントルートを変更
+    environment:
+      APACHE_DOCEMNT_ROOT: /path/to/exaple/root
