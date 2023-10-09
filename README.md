@@ -21,7 +21,7 @@
   - 
 
 
-## 参考サイト
+## 参考
 - 開発環境構築の参考サイト
   - [Docker で Apache + PHP コンテナを作る方法](https://lazesoftware.com/ja/blog/230220/)
   - [DockerでApache+PHP+MySQLの環境を構築してみる](https://qiita.com/me-654393/items/1ed212cb33eafe734835)
