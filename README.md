@@ -17,9 +17,10 @@
       - pdo_mysql(https://www.php.net/manual/ja/book.pdo.php)
       - redis()
       - xdebug(https://xdebug.org)
-  - データーベース：MariaDB
+  - データーベース：postgresql
   - 
-
+## 拡張機能
+- Emmmet:入力の効率化用プラグイン html:5でhtmlのページの外枠が一気に入力できる
 
 ## 参考
 - 開発環境構築の参考サイト
