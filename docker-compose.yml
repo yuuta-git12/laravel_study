@@ -1,15 +1,47 @@
-version: '3.8'
+version: "3"
 services:
-
-  #Apachコンテナ
-  apache:
-    build: ./apache-custom
-    image: php:8.2-apache
+  app:
+    build:
+      context: "docker/app/"
+    ports:
+      - 80:80
+    working_dir: /var/www
+    volumes:
+      - "./www/:/var/www"
+      - "./docker/app/apache2/apache2.conf:/etc/apache2/apache2.conf"
+      - "./docker/app/apache2/sites-available/000-default.conf:/etc/apache2/sites-available/000-default.conf"
+    depends_on:
+      - mysql
+  mysql:
+    build:
+      context: "docker/mysql/"
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      - MYSQL_DATABASE=study_db_name
+      - MYSQL_HOST=mysql
+      - MYSQL_USER=study_user
+      - MYSQL_PASSWORD=study_pass
+      - MYSQL_ROOT_PASSWORD=studt_root_pass
+      - TZ=Asia/Tokyo
+    volumes:
+      - "./docker/mysql/storage/:/var/lib/mysql"
+      - "./docker/mysql/initdb/:/docker-entrypoint-initdb.d"
+    ports:
+      - "3306:3306"
+  phpmyadmin:
+    image: phpmyadmin:latest
     ports:
       - 8080:80
-    volumes:
-      - ./config/php/php.ini:/usr/local/etc/php/php.ini:cached  # ホストの./php.iniをコンテナの/usr/local/etc/php/php.iniにバインドマウント
-      - ./html:/var/www/html
-    # ドキュメントルートを変更
     environment:
-      APACHE_DOCEMNT_ROOT: /path/to/exaple/root
+      - PMA_HOST=mysql
+      - PMA_USER=study_user
+      - PMA_PASSWORD=study_pass
+    depends_on:
+      - mysql
+  # mailhog:
+  #   image: mailhog/mailhog:latest
+  #   ports:
+  #     - "8025:8025"
+  #     - "1025:1025"
+volumes:
+  storage:
