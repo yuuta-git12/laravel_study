@@ -39,7 +39,7 @@ RUN apt-get update && apt-get install -y \
 #   && docker-php-ext-enable imagick
 
 # xdebug(実行時ERRORになる　原因がわからないのでコメントアウト)
-# RUN pecl install xdebug-3.2.0 && docker-php-ext-enable xdebug
+RUN pecl install http://pecl.php.net/get/xdebug-3.2.0.tgz && docker-php-ext-enable xdebug
 
 # modRewriteを有効化する
 RUN mv /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled
