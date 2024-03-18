@@ -5,6 +5,8 @@ services:
       context: "docker/app/"
     ports:
       - 80:80
+      - 8000:80
+      - 5173:5173 # viteで使用するポートをフォワード
     working_dir: /var/www
     volumes:
       - "./www/:/var/www"
