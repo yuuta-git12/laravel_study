@@ -1,4 +1,4 @@
-FROM php:8.2-apache
+FROM php:8.3-apache
 
 # PHP 設定ファイル
 # COPY php.ini /etc/php.ini
@@ -8,6 +8,10 @@ COPY php.ini /usr/local/etc/php/php.ini
 
 # Composerのインストール
 RUN cd /usr/bin && curl -s http://getcomposer.org/installer | php && ln -s /usr/bin/composer.phar /usr/bin/composer
+
+# Node.jsとnpmのインストール
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs
 
 # ミドルウェアインストール
 # https://hub.docker.com/_/php/
@@ -39,7 +43,7 @@ RUN apt-get update && apt-get install -y \
 #   && docker-php-ext-enable imagick
 
 # xdebug(実行時ERRORになる　原因がわからないのでコメントアウト)
-RUN pecl install http://pecl.php.net/get/xdebug-3.2.0.tgz && docker-php-ext-enable xdebug
+# RUN pecl install http://pecl.php.net/get/xdebug-3.2.0.tgz && docker-php-ext-enable xdebug
 
 # modRewriteを有効化する
 RUN mv /etc/apache2/mods-available/rewrite.load /etc/apache2/mods-enabled
