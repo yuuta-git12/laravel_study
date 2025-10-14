@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\MessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +17,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('messages',[MessageController::class,'index']);  // GETリクエストの送信先を指定(MessageControllerのindexメソッド)
+Route::post('messages',[MessageController::class,'store']); // POSTリクエストの送信先を指定(MessageControllerのstoreメソッド)
