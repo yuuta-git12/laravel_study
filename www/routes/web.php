@@ -15,20 +15,45 @@ use App\Http\Controllers\admin\BookController;
 |
 */
 
+/*
+|--------------------------------------------------------------------------
+| トップページ
+|--------------------------------------------------------------------------
+| URL: /
+| メソッド: GET
+| 説明: Laravelのウェルカムページを表示
+*/
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('messages',[MessageController::class,'index']);  // GETリクエストの送信先を指定(MessageControllerのindexメソッド)
-Route::post('messages',[MessageController::class,'store']); // POSTリクエストの送信先を指定(MessageControllerのstoreメソッド)
+/*
+|--------------------------------------------------------------------------
+| メッセージ機能
+|--------------------------------------------------------------------------
+*/
+// GET /messages - メッセージ一覧を取得
+Route::get('messages', [MessageController::class, 'index']);
+// POST /messages - 新しいメッセージを作成
+Route::post('messages', [MessageController::class, 'store']);
 
-// 書籍管理機能のルートを定義
+/*
+|--------------------------------------------------------------------------
+| 管理者向け書籍管理機能
+|--------------------------------------------------------------------------
+| プレフィックス: /admin/books
+| ルート名プレフィックス: books.
+| コントローラー: BookController
+*/
 Route::prefix('admin/books')
     ->name('books.')
     ->controller(BookController::class)
-    ->group(function(){
-    // 書籍一覧ページのルートを定義
-    Route::get('','index')->name('index');
-    // 書籍詳細ページのルートを定義
-    Route::get('{id}','show')->whereNumber('id')->name('show');
-});
+    ->group(function () {
+        // GET /admin/books - 書籍一覧ページ（ルート名: books.index）
+        Route::get('', 'index')->name('index');
+        // GET /admin/books/{id} - 書籍詳細ページ（ルート名: books.show）
+        // whereNumber('id'): IDは数値のみ許可
+        Route::get('{id}', 'show')->whereNumber('id')->name('show');
+        Route::get('create', 'create')->name('create');
+        Route::post('', 'store')->name('store');
+    });
