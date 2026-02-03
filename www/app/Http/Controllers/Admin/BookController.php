@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\BookPostRequest;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\View\View;
@@ -53,7 +52,7 @@ class BookController extends Controller
      * @param BookPostRequest $request バリデーション済みリクエスト
      * @return Book 作成された書籍モデル
      */
-    public function store(Request $request): Book
+    public function store(BookPostRequest $request): Book
     {
         // 新しい書籍インスタンスを作成
         $book = new Book();
