@@ -23,12 +23,14 @@
             {{-- 書籍一覧テーブル --}}
             <table border="1">
                 <tr>
+                    <th>インデックス</th>
                     <th>カテゴリ</th>
                     <th>書籍名</th>
                     <th>価格</th>
                 </tr>
                 @foreach($books as $book)
-                    <tr>
+                    <tr @if($loop->even) style="background:#EEE" @endif>
+                        <td>{{$loop->index}}</td>
                         <td>{{$book->category->title}}</td>
                         <td>{{$book->title}}</td>
                         <td>{{$book->price}}</td>
