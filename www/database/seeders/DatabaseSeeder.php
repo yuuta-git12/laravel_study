@@ -18,5 +18,18 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+        // CategoriesTableSeederを呼び出す
+        // $this->call(CategoriesTableSeeder::class);
+        // AuthorsTableSeederを呼び出す
+        // $this->call(AuthorsTableSeeder::class);
+        // BooksTableSeederを呼び出す
+        // $this->call(BooksTableSeeder::class);
+
+        // 複数のシーダーを呼び出す
+        $this->call([
+            AuthorsTableSeeder::class,
+            BooksTableSeeder::class,
+            AuthorBookTableSeeder::class,
+        ]);
     }
 }
