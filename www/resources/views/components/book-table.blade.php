@@ -19,7 +19,12 @@
             <td>{{$loop->index}}</td>
             {{-- リレーション経由でカテゴリ名を取得 --}}
             <td>{{$book->category->title}}</td>
-            <td>{{$book->title}}</td>
+            {{-- route('book.show', $book)でモデルを渡すと、自動的にIDがURLパラメータに展開される --}}
+            <td>
+                <a href="{{ route('book.show' ,$book) }}">
+                    {{$book->title}}
+                </a>
+            </td>
             <td>{{$book->price}}</td>
         </tr>
     @endforeach

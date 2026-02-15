@@ -39,19 +39,19 @@ class BookController extends Controller
     }
 
     /**
-     * 指定されたIDの書籍を取得する
+     * 書籍詳細を表示する
      *
-     * @param string $id 書籍ID
-     * @return Book 書籍モデル
-     * @throws \Illuminate\Database\Eloquent\ModelNotFoundException 書籍が見つからない場合
+     * 暗黙のルートモデルバインディングにより、URLパラメータ{book}から
+     * 対応するBookモデルが自動的に取得・注入される。
+     * 該当する書籍が存在しない場合は404エラーが自動的に返される。
+     *
+     * @param Book $book ルートモデルバインディングで解決された書籍モデル
+     * @return View 書籍詳細ビュー
      */
-    public function show(string $id): Book
+    public function show(Book $book): View
     {
-        // 書籍を一件取得
-        $book = Book::findOrFail($id);
-
-        // 書籍をレスポンスとして返す
-        return $book;
+        // compact()：変数名の文字列から連想配列を作成（['book' => $book]と同等）
+        return view('admin/book/show', compact('book'));
     }
 
     /**
@@ -84,6 +84,6 @@ class BookController extends Controller
         $categories = Category::all();
 
         // ビューオブジェクトを返す(第1引数:ビューファイルのパス、第２引数:ビューに渡したい値(連想配列の形))
-        return view('admin/book/create', ['categories' => $categories]);
+        return view('admin/book/create', compact('categories'));
     }
 }

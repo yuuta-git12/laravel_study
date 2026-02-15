@@ -51,9 +51,10 @@ Route::prefix('admin/book')
     ->group(function () {
         // GET /admin/book - 書籍一覧ページ（ルート名: book.index）
         Route::get('', 'index')->name('index');
-        // GET /admin/book/{id} - 書籍詳細ページ（ルート名: book.show）
-        // whereNumber('id'): IDは数値のみ許可
-        Route::get('{id}', 'show')->whereNumber('id')->name('show');
+        // GET /admin/book/{book} - 書籍詳細ページ（ルート名: book.show）
+        // {book}はルートモデルバインディングのパラメータ名（Bookモデルに対応）
+        // whereNumber('book'): パラメータは数値のみ許可
+        Route::get('{book}', 'show')->whereNumber('book')->name('show');
         // GET /admin/book/create - 書籍登録フォーム表示（ルート名: book.create）
         Route::get('create', 'create')->name('create');
         // POST /admin/book - 書籍登録処理（ルート名: book.store）
