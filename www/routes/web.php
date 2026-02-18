@@ -59,4 +59,9 @@ Route::prefix('admin/book')
         Route::get('create', 'create')->name('create');
         // POST /admin/book - 書籍登録処理（ルート名: book.store）
         Route::post('', 'store')->name('store');
+        // GET /admin/book/{book}/edit - 書籍編集フォーム表示（ルート名: book.edit）
+        Route::get('{book}/edit', 'edit')->whereNumber('book')->name('edit');
+        // PUT /admin/book/{book} - 書籍更新処理（ルート名: book.update）
+        Route::put('{book}', 'update')->whereNumber('book')->name('update');
+
     });
