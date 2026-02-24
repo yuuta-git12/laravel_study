@@ -63,5 +63,8 @@ Route::prefix('admin/book')
         Route::get('{book}/edit', 'edit')->whereNumber('book')->name('edit');
         // PUT /admin/book/{book} - 書籍更新処理（ルート名: book.update）
         Route::put('{book}', 'update')->whereNumber('book')->name('update');
+        // DELETE /admin/book/{book} - 書籍削除処理（ルート名: book.destroy）
+        Route::delete('{book}', 'destroy')->whereNumber('book')->name('destroy');
+
 
     });

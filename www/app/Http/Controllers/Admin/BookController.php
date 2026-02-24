@@ -161,4 +161,22 @@ class BookController extends Controller
         return redirect(route('book.index'))->with('message', $book->title.'を変更しました。');
     }
 
+    /**
+     * 書籍削除処理
+     *
+     * 指定された書籍をデータベースから削除する。
+     * 中間テーブル(author_book)のレコードはカスケード削除により自動的に削除される。
+     *
+     * @param Book $book ルートモデルバインディングで解決された書籍モデル
+     * @return RedirectResponse 書籍一覧ページへのリダイレクト
+     */
+    public function destroy(Book $book): RedirectResponse
+    {
+        // 書籍を削除（中間テーブルのレコードはカスケード削除で自動処理）
+        $book->delete();
+
+        // 削除完了後にbook.indexにリダイレクトし、フラッシュメッセージを表示
+        return redirect(route('book.index'))->with('message', $book->title.'を削除しました。');
+    }
+
 }

@@ -11,6 +11,7 @@
         <th>書籍名</th>
         <th>価格</th>
         <th>更新</th>
+        <th>削除</th>
     </tr>
     {{-- $booksコレクションをループし、各書籍の情報を行として表示 --}}
     @foreach($books as $book)
@@ -32,6 +33,14 @@
                 <a href="{{ route('book.edit', $book) }}">
                     <button>更新</button>
                 </a>
+            </td>
+            <td>
+                {{-- form内容のsubmit実行で削除処理に$bookデータを渡す --}}
+                <form action="{{ route('book.destroy', $book) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <input type="submit" value="削除">
+                </form>
             </td>
         </tr>
     @endforeach

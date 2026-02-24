@@ -32,7 +32,9 @@ class BookForm extends Component
     ){}
 
     /**
-     * Get the view / contents that represent the component.
+     * コンポーネントのビューを返す
+     *
+     * @return View|Closure|string コンポーネントのビュー
      */
     public function render(): View|Closure|string
     {

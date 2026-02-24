@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('author_book', function (Blueprint $table) {
-            $table->foreignId('book_id')->contrained('books');
+            $table->foreignId('book_id')->contrained('books')->cascadeOnDelete();
             $table->foreignId('author_id')->contrained('authors');
             $table->timestamps();
 

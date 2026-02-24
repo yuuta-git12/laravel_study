@@ -1,3 +1,10 @@
+{{--
+    書籍フォームコンポーネント
+    書籍の新規登録(create)と編集(edit)で共通利用するフォーム部品
+    BookFormコンポーネントクラスから$categories, $authors, $book, $authorIdsを受け取る
+    使用例（新規登録）: <x-book-form :$categories :$authors />
+    使用例（編集）: <x-book-form :$categories :$authors :$book :$authorIds />
+--}}
 <div>
     <label>カテゴリ</label>
     <select name="category_id">
