@@ -1,0 +1,12 @@
+/**
+ * アプリケーションのメインCSSファイル
+ *
+ * Tailwind CSSのディレクティブを読み込み、ユーティリティクラスを利用可能にする
+ */
+
+/* Tailwindのベーススタイル（リセットCSS・基本スタイル） */
+@tailwind base;
+/* Tailwindのコンポーネントクラス（btn, card等の再利用可能なスタイル） */
+@tailwind components;
+/* Tailwindのユーティリティクラス（flex, pt-4, text-center等） */
+@tailwind utilities;
