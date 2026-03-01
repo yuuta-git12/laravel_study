@@ -36,9 +36,9 @@ return [
     */
 
     'guards' => [
-        'web' => [
-            'driver' => 'session',
-            'provider' => 'users',
+        'web' => [  //ガードの名前
+            'driver' => 'session',  //セッションを用いた認証が指定されている
+            'provider' => 'users',  //プロパイダーを指定（usersテーブルを使用）
         ],
     ],
 
@@ -60,9 +60,9 @@ return [
     */
 
     'providers' => [
-        'users' => [
-            'driver' => 'eloquent',
-            'model' => App\Models\User::class,
+        'users' => [  //プロバイダーの名前
+            'driver' => 'eloquent',  //Eloquentを用いた認証が指定されている
+            'model' => App\Models\User::class,  //ユーザーモデルを指定（Userクラスを使用）
         ],
 
         // 'users' => [
