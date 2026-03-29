@@ -42,7 +42,7 @@ return [
         ],
         'admin' => [
             'driver' => 'session',   // セッションを用いた認証
-            'provider' => 'admins',  // adminsプロバイダーを使用（Adminモデル）
+            'provider' => 'admins',  // adminsプロバイダーを使用（adminsテーブル）
         ]
     ],
 

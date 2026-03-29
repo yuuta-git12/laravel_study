@@ -14,6 +14,7 @@ class AuthenticatedSessionController extends Controller
 {
     /**
      * Display the login view.
+     * ログイン画面の表示処理
      */
     public function create(): View
     {
@@ -39,6 +40,7 @@ class AuthenticatedSessionController extends Controller
 
     /**
      * Destroy an authenticated session.
+     * ログアウトの処理
      */
     public function destroy(Request $request): RedirectResponse
     {
