@@ -14,7 +14,9 @@ class AdminsTableSeeder extends Seeder
      */
     public function run(): void
     {
-        //
+        // Admin::factory()->create()：AdminFactoryの定義をベースに、指定した値で上書きしてレコードを生成・保存する
+        // Hash::make()：平文パスワードをbcryptでハッシュ化する（DBには必ずハッシュ値を保存する）
+
         Admin::factory()->create([
             'name' => 'sano',
             'login_id' => 'sano_id',
@@ -25,6 +27,12 @@ class AdminsTableSeeder extends Seeder
             'name' => 'sato',
             'login_id' => 'sato_id',
             'password' => Hash::make('fugafuga'),
+        ]);
+
+        Admin::factory()->create([
+            'name' => 'admin',
+            'login_id' => 'admin',
+            'password' => Hash::make('password'),
         ]);
     }
 }

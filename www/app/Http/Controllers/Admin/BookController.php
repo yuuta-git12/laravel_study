@@ -8,6 +8,7 @@ use App\Http\Requests\BookPutRequest;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\DB;  // DBファサード（トランザクション処理で使用）
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use App\Models\Book;
 use App\Models\Category;
@@ -53,6 +54,7 @@ class BookController extends Controller
      */
     public function show(Book $book): View
     {
+        Log::info('書籍詳細情報が参照されました。ID='.$book->id);
         // compact()：変数名の文字列から連想配列を作成（['book' => $book]と同等）
         return view('admin/book/show', compact('book'));
     }
