@@ -29,18 +29,19 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// middlewareメソッド
+// 認証済み・メール確認済みユーザーのみアクセス可能なダッシュボード
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+// 認証済みユーザー向けプロフィール管理ルート
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-//
+// 認証関連ルート（ログイン・登録など）を読み込む
 require __DIR__.'/auth.php';
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +52,8 @@ require __DIR__.'/auth.php';
 Route::get('messages', [MessageController::class, 'index']);
 // POST /messages - 新しいメッセージを作成
 Route::post('messages', [MessageController::class, 'store']);
+// DELETE /messages/{id}/delete - メッセージを削除
+Route::delete('messages/{id}/delete',[MessageController::class, 'destroy']);
 
 /*
 |--------------------------------------------------------------------------
