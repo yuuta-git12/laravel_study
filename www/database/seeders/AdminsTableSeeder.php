@@ -31,7 +31,7 @@ class AdminsTableSeeder extends Seeder
 
         Admin::factory()->create([
             'name' => 'admin',
-            'login_id' => 'admin',
+            'login_id' => 'admin@example.com',
             'password' => Hash::make('password'),
         ]);
     }

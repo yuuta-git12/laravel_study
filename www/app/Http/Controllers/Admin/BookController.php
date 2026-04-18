@@ -7,6 +7,7 @@ use App\Http\Requests\BookPostRequest;
 use App\Http\Requests\BookPutRequest;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;  // DBファサード（トランザクション処理で使用）
 use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
@@ -22,6 +23,19 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class BookController extends Controller
 {
+
+    /**
+     * コンストラクタ
+     *
+     * authorizeResource()でBookモデルに対するポリシー認可を自動登録する
+     * 各アクションメソッドが呼ばれる前に、BookPolicyの対応するメソッドが自動的に実行される
+     * 第2引数'book'はルートパラメータ名と一致させる必要がある
+     */
+    public function __construct()
+    {
+        $this->authorizeResource(Book::class, 'book');
+    }
+
     /**
      * 書籍一覧を取得する
      *
@@ -75,6 +89,7 @@ class BookController extends Controller
         $book->category_id = $request->category_id;
         $book->title = $request->title;
         $book->price = $request->price;
+        $book->admin_id = Auth::id();   // 管理者ID 型:int 外部キー テーブル名:admins
 
         // DB::transaction()でトランザクション処理を実行
         // 書籍の保存と著者の紐付けを一括で行い、どちらかが失敗した場合は全てロールバックされる
