@@ -2,7 +2,7 @@
 
 namespace App\Policies;
 
-use App\Models\User;
+use Illuminate\Support\Facades\Gate;
 use App\Models\Admin;
 use App\Models\Book;
 
@@ -44,7 +44,7 @@ class BookPolicy
      * @return bool
      */
     public function view(Admin $admin, Book $book){
-        return true;
+        return Gate::allows('example-com-user');
     }
 
     /**
@@ -58,8 +58,7 @@ class BookPolicy
     public function create(Admin $admin): bool
     {
         // login_idの末尾11文字が'example.com'かどうかを確認する
-        return substr($admin->login_id, -11) === 'example.com';
-        return true;
+        return Gate::allows('example-com-user');
     }
 
 

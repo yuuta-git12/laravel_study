@@ -23,9 +23,14 @@
             <td>{{$book->category->title}}</td>
             {{-- route('book.show', $book)でモデルを渡すと、自動的にIDがURLパラメータに展開される --}}
             <td>
+                {{-- example.comドメインのユーザー以外でログインするとリンクが無効になる --}}
+                @can('example-com-user')
                 <a href="{{ route('book.show' ,$book) }}">
                     {{$book->title}}
                 </a>
+                @else
+                    {{ $book->title }}
+                @endcan
             </td>
             <td>{{$book->price}}</td>
             {{-- 書籍編集ページへのリンク（route()にモデルを渡してIDをURLに展開） --}}
