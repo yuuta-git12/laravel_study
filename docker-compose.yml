@@ -1,49 +1,88 @@
-version: "3"
+# =============================================================================
+# Laravel学習用 Docker Compose 設定
+#
+# 以下の4つのサービスで構成:
+#   - app:        PHP 8.3 + Apache（Laravelアプリケーション本体）
+#   - mysql:      MySQL（データベース）
+#   - phpmyadmin: phpMyAdmin（DB管理用GUIツール）
+#   - mailpit:    Mailpit（メール送信テスト用ツール）
+# =============================================================================
+
 services:
+  # ---------------------------------------------------------------------------
+  # アプリケーションサーバー（PHP + Apache）
+  # Laravelアプリケーションを動作させるメインコンテナ
+  # ---------------------------------------------------------------------------
   app:
     build:
-      context: "docker/app/"
+      context: "docker/app/" # Dockerfileの場所
     ports:
-      - 80:80
-      - 8000:80
-      - 5173:5173 # viteで使用するポートをフォワード
-    working_dir: /var/www
+      - 80:80     # HTTP（本番想定）
+      - 8000:80   # HTTP（開発用の代替ポート）
+      - 5173:5173 # Vite開発サーバー用（ホットリロード）
+    working_dir: /var/www # コンテナ内の作業ディレクトリ
     volumes:
+      # Laravelプロジェクト本体をマウント
       - "./www/:/var/www"
+      # Apache設定ファイルをマウント（コンテナ内の設定を上書き）
       - "./docker/app/apache2/apache2.conf:/etc/apache2/apache2.conf"
       - "./docker/app/apache2/sites-available/000-default.conf:/etc/apache2/sites-available/000-default.conf"
     depends_on:
-      - mysql
+      - mysql # MySQLの起動を待ってから起動
+
+  # ---------------------------------------------------------------------------
+  # データベースサーバー（MySQL）
+  # ---------------------------------------------------------------------------
   mysql:
     build:
-      context: "docker/mysql/"
+      context: "docker/mysql/" # Dockerfileの場所
+    # MySQL 8.0以降のデフォルト認証方式（caching_sha2_password）を
+    # 従来方式（mysql_native_password）に変更し、互換性を確保
     command: --default-authentication-plugin=mysql_native_password
     environment:
-      - MYSQL_DATABASE=study_db_name
-      - MYSQL_HOST=mysql
-      - MYSQL_USER=study_user
-      - MYSQL_PASSWORD=study_pass
-      - MYSQL_ROOT_PASSWORD=studt_root_pass
-      - TZ=Asia/Tokyo
+      - MYSQL_DATABASE=study_db_name    # 作成するデータベース名
+      - MYSQL_HOST=mysql                # ホスト名（サービス名と一致）
+      - MYSQL_USER=study_user           # 一般ユーザー名
+      - MYSQL_PASSWORD=study_pass       # 一般ユーザーのパスワード
+      - MYSQL_ROOT_PASSWORD=study_root_pass # rootユーザーのパスワード
+      - TZ=Asia/Tokyo                   # タイムゾーン設定
     volumes:
+      # MySQLのデータを永続化（コンテナ削除後もデータを保持）
       - "./docker/mysql/storage/:/var/lib/mysql"
+      # 初回起動時に実行するSQLファイルを配置するディレクトリ
       - "./docker/mysql/initdb/:/docker-entrypoint-initdb.d"
     ports:
-      - "3306:3306"
+      - "3306:3306" # ホストからMySQLへ直接接続可能にする
+
+  # ---------------------------------------------------------------------------
+  # phpMyAdmin（データベース管理ツール）
+  # ブラウザから http://localhost:8080 でアクセス可能
+  # ---------------------------------------------------------------------------
   phpmyadmin:
     image: phpmyadmin:latest
     ports:
-      - 8080:80
+      - 8080:80 # ブラウザからのアクセス用ポート
     environment:
-      - PMA_HOST=mysql
-      - PMA_USER=study_user
-      - PMA_PASSWORD=study_pass
+      - PMA_HOST=mysql        # 接続先MySQLのホスト名（サービス名）
+      - PMA_USER=study_user   # ログインユーザー名
+      - PMA_PASSWORD=study_pass # ログインパスワード
     depends_on:
-      - mysql
-  # mailhog:
-  #   image: mailhog/mailhog:latest
-  #   ports:
-  #     - "8025:8025"
-  #     - "1025:1025"
+      - mysql # MySQLの起動を待ってから起動
+
+  # ---------------------------------------------------------------------------
+  # Mailpit（メール送信テスト用）
+  # 送信メールをキャプチャし、ブラウザから確認できるツール
+  # ブラウザから http://localhost:8025 でダッシュボードにアクセス可能
+  # Laravel Breezeのメール認証機能の動作確認に使用
+  # ---------------------------------------------------------------------------
+  mailpit:
+    image: 'axllent/mailpit:latest'
+    ports:
+      # SMTPポート（Laravelからメール送信する際の接続先）
+      - '${FORWARD_MAILPIT_PORT:-1025}:1025'
+      # Webダッシュボードポート（ブラウザから送信メールを確認）
+      - '${FORWARD_MAILPIT_DASHBOARD_PORT:-8025}:8025'
+
+# 名前付きボリューム定義（現在未使用）
 volumes:
   storage:

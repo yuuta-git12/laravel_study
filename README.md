@@ -57,6 +57,100 @@ laravel_study/
 - **パスワード**: `study_pass`
 - **ルートパスワード**: `studt_root_pass`
 
+## 🆕 新規Laravelプロジェクトの作成手順
+
+このDocker環境を使って、ゼロから新しいLaravelプロジェクトを作成する手順です。
+
+### 前提条件
+
+- Docker / Docker Composeがインストール済みであること
+- `www/` ディレクトリが空であること（既存ファイルがある場合は事前にバックアップ・削除）
+
+### 手順
+
+#### 1. Dockerコンテナのビルドと起動
+
+```bash
+docker-compose up -d --build
+```
+
+#### 2. Laravelプロジェクトの作成
+
+コンテナ内の `/var/www`（ホスト側の `www/` に対応）にLaravelプロジェクトを作成します。
+
+```bash
+docker-compose exec app composer create-project laravel/laravel . --prefer-dist
+```
+
+> **注意**: `www/` ディレクトリに既存ファイルがあると失敗します。その場合は一時ディレクトリに作成してから移動してください。
+> ```bash
+> docker-compose exec app composer create-project laravel/laravel /tmp/new_laravel --prefer-dist
+> docker-compose exec app bash -c "cp -rp /tmp/new_laravel/. /var/www/ && rm -rf /tmp/new_laravel"
+> ```
+
+#### 3. 環境設定ファイルの作成
+
+```bash
+# .envファイルが存在しない場合はコピーして作成
+docker-compose exec app cp .env.example .env
+```
+
+#### 4. アプリケーションキーの生成
+
+```bash
+docker-compose exec app php artisan key:generate
+```
+
+#### 5. .envのデータベース設定を更新
+
+`.env` ファイルのDB設定をDocker環境に合わせて変更します。
+
+```bash
+# .envを開いて編集
+docker-compose exec app vim .env
+```
+
+以下の値に変更してください：
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=mysql
+DB_PORT=3306
+DB_DATABASE=study_db_name
+DB_USERNAME=study_user
+DB_PASSWORD=study_pass
+```
+
+Mailpitを使ったメール送信テストを行う場合は、以下も追記してください：
+
+```env
+MAIL_MAILER=smtp
+MAIL_HOST=mailpit
+MAIL_PORT=1025
+MAIL_USERNAME=null
+MAIL_PASSWORD=null
+MAIL_ENCRYPTION=null
+```
+
+#### 6. データベースのセットアップ
+
+```bash
+# マイグレーションの実行
+docker-compose exec app php artisan migrate
+```
+
+#### 7. npm依存関係のインストール（フロントエンドを使用する場合）
+
+```bash
+docker-compose exec app npm install
+```
+
+#### 8. 動作確認
+
+ブラウザで http://localhost にアクセスしてLaravelのウェルカムページが表示されれば完了です。
+
+---
+
 ## 🚀 起動方法
 
 ### 1. 環境の起動

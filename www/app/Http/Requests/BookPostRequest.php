@@ -43,6 +43,10 @@ class BookPostRequest extends FormRequest
             'title' => 'required|unique:books|max:100',
             // 価格: 数値、1以上999999以下
             'price' => 'numeric|min:1|max:999999',
+            // 著者ID：必須、配列
+            'author_ids' => 'required|array',
+            // 配列author_idsの要素にバリデーションを実施、必須、著者テーブルに存在するID
+            'author_ids.*' => 'required|exists:authors,id',
         ];
     }
 }

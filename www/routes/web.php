@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\admin\BookController;
+use App\Http\Controllers\Auth\Admin\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,6 +29,20 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+// 認証済み・メール確認済みユーザーのみアクセス可能なダッシュボード
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+// 認証済みユーザー向けプロフィール管理ルート
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+// 認証関連ルート（ログイン・登録など）を読み込む
+require __DIR__.'/auth.php';
 /*
 |--------------------------------------------------------------------------
 | メッセージ機能
@@ -36,26 +52,48 @@ Route::get('/', function () {
 Route::get('messages', [MessageController::class, 'index']);
 // POST /messages - 新しいメッセージを作成
 Route::post('messages', [MessageController::class, 'store']);
+// DELETE /messages/{id}/delete - メッセージを削除
+Route::delete('messages/{id}/delete',[MessageController::class, 'destroy']);
 
 /*
 |--------------------------------------------------------------------------
 | 管理者向け書籍管理機能
 |--------------------------------------------------------------------------
-| プレフィックス: /admin/books
+| プレフィックス: admin
 | ルート名プレフィックス: books.
 | コントローラー: BookController
 */
-Route::prefix('admin/book')
-    ->name('book.')
-    ->controller(BookController::class)
-    ->group(function () {
-        // GET /admin/book - 書籍一覧ページ（ルート名: book.index）
-        Route::get('', 'index')->name('index');
-        // GET /admin/book/{id} - 書籍詳細ページ（ルート名: book.show）
-        // whereNumber('id'): IDは数値のみ許可
-        Route::get('{id}', 'show')->whereNumber('id')->name('show');
-        // GET /admin/book/create - 書籍登録フォーム表示（ルート名: book.create）
-        Route::get('create', 'create')->name('create');
-        // POST /admin/book - 書籍登録処理（ルート名: book.store）
-        Route::post('', 'store')->name('store');
+Route::prefix('admin')->group(function(){
+
+    Route::name('admin.')
+        ->controller(AuthenticatedSessionController::class)
+        ->group(function () {
+        Route::get('login', 'create')->name('create')->middleware('guest:admin');
+        Route::post('login', 'store')->name('store')->middleware('guest:admin');
+        Route::post('logout', 'destroy')->name('destroy')->middleware('auth:admin');
     });
+
+    Route::prefix('books')
+        ->name('book.')
+        ->middleware('auth:admin')  // 未認証の場合,以降のアドレスにはアクセスできない
+        ->controller(BookController::class)
+        ->group(function(){
+            // GET /admin/book - 書籍一覧ページ（ルート名: book.index）
+            Route::get('', 'index')->name('index');
+            // GET /admin/book/{book} - 書籍詳細ページ（ルート名: book.show）
+            // {book}はルートモデルバインディングのパラメータ名（Bookモデルに対応）
+            // whereNumber('book'): パラメータは数値のみ許可
+            Route::get('{book}', 'show')->whereNumber('book')->name('show');
+            // GET /admin/book/create - 書籍登録フォーム表示（ルート名: book.create）
+            Route::get('create', 'create')->name('create');
+            // POST /admin/book - 書籍登録処理（ルート名: book.store）
+            Route::post('', 'store')->name('store');
+            // GET /admin/book/{book}/edit - 書籍編集フォーム表示（ルート名: book.edit）
+            Route::get('{book}/edit', 'edit')->whereNumber('book')->name('edit');
+            // PUT /admin/book/{book} - 書籍更新処理（ルート名: book.update）
+            Route::put('{book}', 'update')->whereNumber('book')->name('update');
+            // DELETE /admin/book/{book} - 書籍削除処理（ルート名: book.destroy）
+            Route::delete('{book}', 'destroy')->whereNumber('book')->name('destroy');
+    });
+});
+

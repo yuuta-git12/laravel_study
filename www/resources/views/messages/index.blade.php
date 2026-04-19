@@ -19,7 +19,14 @@
             <!-- メッセージの一覧を表示 -->
                 @foreach ($messages as $message)
                 <!-- メッセージテーブルのbodyカラムを表示 -->
-                    <li>{{ $message->body }}</li>
+                    {{-- フォームで削除処理 --}}
+                    <form action="/messages/{{ $message->id }}/delete" method="POST">
+                        {{ $message-> body}}
+                        @csrf
+                        {{-- HTMLフォームはDELETEメソッドをサポートしないため、@methodでオーバーライド --}}
+                        @method('DELETE')
+                        <input type="submit" value="削除">
+                    </form>
                 @endforeach
             </ul>
         </main>
