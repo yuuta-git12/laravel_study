@@ -18,8 +18,9 @@ class MessageController extends Controller
      */
     public function index(): View
     {
-        // メッセージテーブルのレコードを全件取得
-        $messages = Message::all();
+        // メッセージテーブルのレコードをID昇順（作成順）で全件取得
+        // orderBy('id') でテスト実行時も取得順序を保証する
+        $messages = Message::orderBy('id')->get();
         // messagesというキーで、ビューへ渡す
         return view('messages/index',['messages' => $messages]);
     }
