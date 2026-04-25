@@ -11,6 +11,20 @@ class AuthenticationTest extends TestCase
 {
     use RefreshDatabase;
 
+    private $admin;
+
+    public function setUp(): void
+    {
+        // 親のsetUpメソッド呼び出し（必須）
+        parent::setUp();
+
+        // ログインテスト用のユーザー作成
+        $this->admin = Admin::factory()->create([
+            'login_id' => 'test_id',
+            'password' => \Hash::make('pass@12345'),
+        ]);
+    }
+
     /** @test */
     public function ログイン画面の表示(): void
     {
@@ -21,37 +35,25 @@ class AuthenticationTest extends TestCase
     /** @test */
     public function ログイン成功(): void
     {
-        // 1.ログインようユーザー作成
-        $admin_user = Admin::factory()->create([
-            'login_id' => 'test_id',
-            'password' => \Hash::make('password'),
-        ]);
-
         //2. ログイン成功後、書籍一覧にリダイレクトする
         $this->post(route('admin.store'),[
             'login_id' => 'test_id',
-            'password' => 'password',
+            'password' => 'pass@12345',
         ])->assertRedirect(route('book.index'));
 
         //3.認証されている
-        $this->assertAuthenticatedAs($admin_user, 'admin');
+        $this->assertAuthenticatedAs($this->admin, 'admin');
     }
 
     /** @test */
     public function ログイン失敗(): void
     {
-        // 事前情報としてログイン用ユーザー作成
-        $admin_user = Admin::factory()->create([
-            'login_id' => 'test_id',
-            'password' => \Hash::make('password'),
-        ]);
-
         // IDが一致しない場合
         // 送信元にリダイレクトするためfromを使用
         $this->from(route('admin.store'))
             ->post(route('admin.store'),[
                 'login_id' => 'error_id',
-                'password' => 'password',
+                'password' => 'pass@12345',
             ])
             ->assertRedirect(route('admin.create'))
             ->assertInvalid(['login_id' => 'Eメールとパスワードの組み合わせが一致しません']);   // auth.phpで定義したメッセージ
@@ -60,7 +62,7 @@ class AuthenticationTest extends TestCase
         $this->from(route('admin.store'))
                 ->post(route('admin.store'),[
                 'login_id' => 'test_id',
-                'password' => 'error_password',
+                'password' => 'password@12',
             ])
             ->assertRedirect(route('admin.create'))
             ->assertInvalid(['login_id' => 'Eメールとパスワードの組み合わせが一致しません']);   // auth.phpで定義したメッセージ
@@ -68,4 +70,33 @@ class AuthenticationTest extends TestCase
         // 認証されていない
         $this->assertGuest('admin');
     }
+
+    /** @test */
+    public function バリデーション(): void
+    {
+        $url = route('admin.store');
+
+        // リダイレクト
+        $this->from(route('admin.create'))
+            ->post($url,['login_id' => ''])
+            ->assertRedirect(route('admin.create'));
+
+        // ID未入力
+        $this->post($url, ['login_id' => ''])
+            ->assertInvalid(['login_id' => 'login idは必須']);
+
+        // ID入力
+        $this->post($url, ['login_id' => 'a'])
+            ->assertValid('login_id');
+
+        // パスワード未入力
+        $this->post($url, ['password' => ''])
+            ->assertInvalid(['password' => 'passwordは必須']);
+
+        // パスワード
+        $this->post($url, ['password' => 'pass@12345'])
+            ->assertValid('password');
+
+    }
+
 }

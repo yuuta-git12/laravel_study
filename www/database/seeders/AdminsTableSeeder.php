@@ -20,19 +20,19 @@ class AdminsTableSeeder extends Seeder
         Admin::factory()->create([
             'name' => 'sano',
             'login_id' => 'sano_id',
-            'password' => Hash::make('hogehoge'),
+            'password' => Hash::make('hogehoge@12'),
         ]);
 
         Admin::factory()->create([
             'name' => 'sato',
             'login_id' => 'sato_id',
-            'password' => Hash::make('fugafuga'),
+            'password' => Hash::make('fugafuga@12'),
         ]);
 
         Admin::factory()->create([
             'name' => 'admin',
             'login_id' => 'admin@example.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('password@12'),
         ]);
     }
 }

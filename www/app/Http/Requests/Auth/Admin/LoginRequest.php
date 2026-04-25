@@ -5,6 +5,7 @@ namespace App\Http\Requests\Auth\Admin;
 use App\Http\Middleware\Authenticate;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rules\Password;
 use Illuminate\Validation\ValidationException;
 
 /**
@@ -30,7 +31,7 @@ class LoginRequest extends FormRequest
         return [
             //
             'login_id' => ['required', 'string'],
-            'password' => ['required', 'string'],
+            'password' => ['required', 'string', 'max:15', Password::min(1)->numbers()->symbols()],
         ];
     }
 
