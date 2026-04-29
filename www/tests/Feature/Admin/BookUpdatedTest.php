@@ -187,4 +187,66 @@ class BookUpdatedTest extends TestCase
             ->assertValid('author_ids.0');
 
     }
+
+    /**
+     * 書籍テーブルがパラメータ通りに更新されることを確認するテスト
+     *
+     * @test
+     */
+    public function 更新処理(): void
+    {
+        $url = route('book.update', $this->book);
+
+        // 入力データ
+        $param = [
+            'category_id' => $this->categories[0]->id,
+            'title' => 'New Laravel Book',
+            'price' => '10000',
+            'author_ids' => [
+                $this->authors[1]->id,
+                $this->authors[2]->id,
+            ],
+        ];
+
+        // 作成者で認証
+        $this->actingAs($this->admin, 'admin');
+
+        // 更新後、書籍一覧へリダイレクトする
+        $this->put($url, $param)
+            ->assertRedirect(route('book.index'));
+
+        // 書籍テーブルがパラメータ通りに更新される
+        $updatedBook = [
+            'id' => $this->book->id,
+            'category_id' => $param['category_id'],
+            'title' => $param['title'],
+            'price' => $param['price'],
+        ];
+        $this->assertDatabaseHas('books', $updatedBook);
+
+        // 書籍と著者の関連付けが削除され、新しくパラメータ通りに登録される
+        foreach($this->authors as $author){
+
+            $authorBook = [
+                'book_id' => $this->book->id,
+                'author_id' => $author->id,
+            ];
+
+            // パラメータで指定された著者IDか否かを判定
+            if(in_array($author->id, $param['author_ids'])){
+
+                // 指定の著者書籍情報が登録される
+                $this->assertDatabaseHas('author_book', $authorBook);
+            }else{
+
+                // 指定されていない著者書籍情報が削除される
+                $this->assertDatabaseMissing('author_book', $authorBook);   // 第1引数のテーブルに第2引数の値が登録されていないことを確認
+            }
+        }
+
+        // 艦長メッセージが表示される
+        $this->get(route('book.index'))
+            ->assertSee($param['title'].'を変更しました');
+
+    }
 }

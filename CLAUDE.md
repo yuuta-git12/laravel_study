@@ -111,4 +111,4 @@ DB_PASSWORD=study_pass
 ```
 
 ## プロンプト
-- 今日の内容を記録して　→ TodayHistoryディレクトリにその日やったことを記録する
+- 今日の内容を記録して　→ `/TodayHistory`ディレクトリにその日やったことを記録する
